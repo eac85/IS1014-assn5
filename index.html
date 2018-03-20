@@ -87,7 +87,7 @@ var textureFiles = [  // URLs of image files for the available textures
       "Earth-1024x512.jpg",
       "NightEarth-512x256.jpg",
       "brick001.jpg",
-      "clouds.jpg"
+      "clouds.jpg",
 ];
 var textureObject = new Array(textureFiles.length);  // texture IDs for the textures
 var currentTexture = -1;  // Number of current texture; -1 means no texture.
@@ -159,6 +159,8 @@ function installTexture() {
               draw();
         }
         img.src = textureFiles[tex];
+      // img.src = "Earth-1024x512.jpg";
+
     }
 }
 
@@ -190,6 +192,11 @@ function installModel() {
      }
      else if (model == "Ring") {
         modelData = ring(6,12,64);
+
+     }
+     else if(model == "Other"){
+        modelData = other(6,12,64);
+       
      }
      gl.bindBuffer(gl.ARRAY_BUFFER, aCoordsBuffer);
      gl.bufferData(gl.ARRAY_BUFFER, modelData.vertexPositions, gl.STATIC_DRAW);
@@ -296,11 +303,11 @@ function init() {
            "Could not initialize WebGL: " + e;
       return;
    }
-   document.getElementById("modelSelect").value = "Teapot";
+   document.getElementById("modelSelect").value = "Other";
    document.getElementById("litCheckbox").checked = true;
-   document.getElementById("textureSelect").value = "3";
+   document.getElementById("textureSelect").value = "2";
    installModel();    // Causes a call to draw(), with no texture.
-   installTexture(3); // Causes a delayed call to draw(), with the texture.
+   installTexture(2); // Causes a delayed call to draw(), with the texture.
 }
 
 
@@ -324,7 +331,7 @@ function init() {
       <option>Cone</option>
       <option>Cube</option>
       <option>Ring</option>
-      <option>Heart</option>
+      <option>Other</option>
    </select>
    Select Texture:
    <select id="textureSelect" onchange="installTexture()">
