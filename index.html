@@ -303,11 +303,11 @@ function init() {
            "Could not initialize WebGL: " + e;
       return;
    }
-   document.getElementById("modelSelect").value = "Cube";
+   document.getElementById("modelSelect").value = "Teapot";
    document.getElementById("litCheckbox").checked = true;
-   document.getElementById("textureSelect").value = "3";
+   document.getElementById("textureSelect").value = "2";
    installModel();    // Causes a call to draw(), with no texture.
-   installTexture(2); // Causes a delayed call to draw(), with the texture.
+   installTexture(3); // Causes a delayed call to draw(), with the texture.
 }
 
 

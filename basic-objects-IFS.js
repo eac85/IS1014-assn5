@@ -391,9 +391,9 @@ function other(outerRadius, innerRadius, slices, stacks) {
 
 function newring(outerRadius, innerRadius, slices, stacks) {
   outerRadius = outerRadius || 0.5;
-   innerRadius = innerRadius || outerRadius/3;
-   slices = slices || 32;
-   stacks = stacks || 16;
+   innerRadius = innerRadius || outerRadius/1.4;
+   slices = slices || 50;
+   stacks = stacks || 50;
    var vertexCount = (slices+1)*(stacks+1);
    var vertices = new Float32Array( 3*vertexCount );
    var normals = new Float32Array( 3* vertexCount );
