@@ -194,8 +194,8 @@ function installModel() {
         modelData = ring(6,12,64);
 
      }
-     else if(model == "Other"){
-        modelData = newring(10, 20,64);
+     else if(model == "Figure-8"){
+        modelData = newring(15);
        
      }
      gl.bindBuffer(gl.ARRAY_BUFFER, aCoordsBuffer);
@@ -303,9 +303,9 @@ function init() {
            "Could not initialize WebGL: " + e;
       return;
    }
-   document.getElementById("modelSelect").value = "Other";
+   document.getElementById("modelSelect").value = "Cube";
    document.getElementById("litCheckbox").checked = true;
-   document.getElementById("textureSelect").value = "2";
+   document.getElementById("textureSelect").value = "3";
    installModel();    // Causes a call to draw(), with no texture.
    installTexture(2); // Causes a delayed call to draw(), with the texture.
 }
@@ -331,7 +331,7 @@ function init() {
       <option>Cone</option>
       <option>Cube</option>
       <option>Ring</option>
-      <option>Other</option>
+      <option>Figure-8</option>
    </select>
    Select Texture:
    <select id="textureSelect" onchange="installTexture()">
