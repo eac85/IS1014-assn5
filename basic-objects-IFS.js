@@ -281,15 +281,15 @@ function uvTorus(outerRadius, innerRadius, slices, stacks) {
 
 
 function other(outerRadius, innerRadius, slices, stacks) {
-   outerRadius = outerRadius || 0.5;
+    outerRadius = outerRadius || 5;
    innerRadius = innerRadius || outerRadius/3;
    slices = slices || 32;
    stacks = stacks || 16;
-   var vertexCount = (slices+4)*(stacks+4);
-   var vertices = new Float32Array( 3*vertexCount );
-   var normals = new Float32Array( 3* vertexCount );
-   var texCoords = new Float32Array( 2*vertexCount );
-   var indices = new Uint16Array( 2*slices*stacks*3 );
+   var vertexCount = (slices+1)*(stacks+1);
+   var vertices = new Float32Array( 6*vertexCount );
+   var normals = new Float32Array( 6* vertexCount );
+   var texCoords = new Float32Array( 4*vertexCount );
+   var indices = new Uint16Array( 4*slices*stacks*6 );
    var du = 2*Math.PI/slices;
    var dv = 2*Math.PI/stacks;
    var centerRadius = (innerRadius+outerRadius)/2;
@@ -331,6 +331,53 @@ function other(outerRadius, innerRadius, slices, stacks) {
           indices[k++] = row2 + i + 1;
       }
    }
+
+
+   //----------------------------------
+    outerRadius =  10;
+   innerRadius = innerRadius || outerRadius/3;
+   slices = slices || 32;
+   stacks = stacks || 16;
+   var du = 2*Math.PI/slices;
+   var dv = 2*Math.PI/stacks;
+   var centerRadius = (innerRadius+outerRadius)/2;
+   var tubeRadius = outerRadius - centerRadius;
+   var i,j,u,v,cx,cy,sin,cos,x,y,z;
+   for (j = 0; j <= stacks; j++) {
+      v = -Math.PI + j*dv;
+      cos = Math.cos(v);
+      sin = Math.sin(v);
+      for (i = 0; i <= slices; i++) {
+         u = i*du;
+         cx = Math.cos(u);
+         cy = Math.sin(u);
+         x = cx*(centerRadius + tubeRadius*cos);
+         y = cy*(centerRadius + tubeRadius*cos);
+         z = sin*tubeRadius;
+         vertices[indexV] = x;
+         normals[indexV++] = cx*cos;
+         vertices[indexV] = y
+         normals[indexV++] = cy*cos;
+         vertices[indexV] = z
+         normals[indexV++] = sin;
+         texCoords[indexT++] = i/slices;
+         texCoords[indexT++] = j/stacks;
+      } 
+   }
+   var k = 0;
+   for (j = 0; j < stacks; j++) {
+      var row1 = j*(slices+1);
+      var row2 = (j+1)*(slices+1);
+      for (i = 0; i < slices; i++) {
+          indices[k++] = row1 + i;
+          indices[k++] = row2 + i + 1;
+          indices[k++] = row2 + i;
+          indices[k++] = row1 + i;
+          indices[k++] = row1 + i + 1;
+          indices[k++] = row2 + i + 1;
+      }
+   }
+   //----------------------------------
    return {
        vertexPositions: vertices,
        vertexNormals: normals,
@@ -338,6 +385,83 @@ function other(outerRadius, innerRadius, slices, stacks) {
        indices: indices
    };
 }
+
+
+
+function newring(innerRadius, outerRadius, slices) {
+   if (arguments.length == 0)
+      innerRadius = 0.25;
+   outerRadius = outerRadius || innerRadius * 2 || 0.5;
+   slices = slices || 32;
+   var vertexCount, vertices, normals, texCoords, indices, i;
+   vertexCount = (innerRadius == 0)? slices + 1 : slices * 2;
+   vertices = new Float32Array( 3*vertexCount );
+   normals = new Float32Array( 3* vertexCount );
+   texCoords = new Float32Array( 2*vertexCount );
+   indices = new Uint16Array( innerRadius == 0 ?  3*slices : 3*2*slices );
+   var d = 2*Math.PI/slices;
+   var k = 0;
+   var t = 0;
+   var n = 0;
+   if (innerRadius == 0) {
+      for (i = 0; i < slices; i++) {
+         c = Math.cos(d*i);
+         s = Math.sin(d*i);
+         vertices[k++] = c*outerRadius;
+         vertices[k++] = s*outerRadius;
+         vertices[k++] = 0;
+         texCoords[t++] = 0.5 + 0.5*c;
+         texCoords[t++] = 0.5 + 0.5*s;
+         indices[n++] = slices;
+         indices[n++] = i;
+         indices[n++] = i == slices-1 ? 0 : i + 1;
+      }
+      vertices[k++] = vertices[k++] = vertices[k++] = 0;
+      texCoords[t++] = texCoords[t++] = 0;
+   }
+   else {
+      var r = innerRadius / outerRadius;
+      for (i = 0; i < slices; i++) {
+         c = Math.cos(d*i);
+         s = Math.sin(2*d*i);
+         vertices[k++] = c*innerRadius;
+         vertices[k++] = s*innerRadius;
+         vertices[k++] = 0;
+         texCoords[t++] = 0.5 + 0.5*c*r;
+         texCoords[t++] = 0.5 + 0.5*s*r;
+         vertices[k++] = c*outerRadius;
+         vertices[k++] = s*outerRadius;
+         vertices[k++] = 0;
+         texCoords[t++] = 0.5 + 0.5*c;
+         texCoords[t++] = 0.5 + 0.5*s;
+      }
+      for (i = 0; i < slices - 1; i++) {
+         indices[n++] = 2*i;
+         indices[n++] = 2*i+1;
+         indices[n++] = 2*i+3;
+         indices[n++] = 2*i;
+         indices[n++] = 2*i+3;
+         indices[n++] = 2*i+2;
+      }
+      indices[n++] = 2*i;
+      indices[n++] = 2*i+1;
+      indices[n++] = 1;
+      indices[n++] = 2*i;
+      indices[n++] = 1;
+      indices[n++] = 0;
+   }
+   for (i = 0; i < vertexCount; i++) {
+      normals[3*i] = normals[3*i+1] = 0;
+      normals[3*i+2] = 1;
+   }
+   return {
+       vertexPositions: vertices,
+       vertexNormals: normals,
+       vertexTextureCoords: texCoords,
+       indices: indices
+   };
+}
+
 
 /**
  * Defines a model of a cylinder.  The axis of the cylinder is the z-axis,
